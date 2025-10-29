@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Semanal - Comidas Sostenibles</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f0fdf4 0%, #fef3c7 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #166534;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        .cost-badge {
+            display: inline-block;
+            background: #dcfce7;
+            color: #166534;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            background: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tab:hover {
+            background: #f9fafb;
+        }
+
+        .tab.active {
+            background: #16a34a;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .content {
+            display: none;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        .day-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .day-card h2 {
+            color: #15803d;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #dcfce7;
+        }
+
+        .meal-item {
+            margin-bottom: 15px;
+        }
+
+        .meal-label {
+            font-weight: 600;
+            color: #d97706;
+            display: inline-block;
+            width: 100px;
+        }
+
+        .meal-name {
+            color: #374151;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .category-card h2 {
+            color: #15803d;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #dcfce7;
+        }
+
+        .shopping-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .shopping-item:hover {
+            background: #f0fdf4;
+        }
+
+        .shopping-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #16a34a;
+        }
+
+        .shopping-item.checked span {
+            text-decoration: line-through;
+            color: #9ca3af;
+        }
+
+        .item-name {
+            flex: 1;
+            color: #374151;
+        }
+
+        .item-qty {
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .recipe-list {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 25px;
+        }
+
+        .recipe-list h2 {
+            color: #15803d;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+        }
+
+        .recipe-button {
+            width: 100%;
+            text-align: left;
+            padding: 20px;
+            background: #f0fdf4;
+            border: none;
+            border-left: 4px solid #16a34a;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .recipe-button:hover {
+            background: #dcfce7;
+        }
+
+        .recipe-name {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+
+        .recipe-meta {
+            font-size: 0.9em;
+            color: #6b7280;
+        }
+
+        .recipe-detail {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+
+        .back-button {
+            background: none;
+            border: none;
+            color: #16a34a;
+            font-weight: 600;
+            font-size: 1em;
+            cursor: pointer;
+            margin-bottom: 20px;
+            padding: 5px 0;
+        }
+
+        .back-button:hover {
+            color: #15803d;
+        }
+
+        .recipe-detail h2 {
+            color: #166534;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .recipe-badges {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .badge-time {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-nutrition {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .recipe-section {
+            margin-bottom: 30px;
+        }
+
+        .recipe-section h3 {
+            color: #1f2937;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+
+        .ingredient-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+            align-items: flex-start;
+        }
+
+        .check-icon {
+            color: #16a34a;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .ingredient-text {
+            color: #374151;
+        }
+
+        .step-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .step-number {
+            width: 28px;
+            height: 28px;
+            background: #16a34a;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9em;
+            flex-shrink: 0;
+        }
+
+        .step-text {
+            color: #374151;
+            padding-top: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+            }
+
+            .meal-label {
+                display: block;
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Plan Semanal</h1>
+            <p>Comidas saludables, locales y sostenibles</p>
+            <div class="cost-badge">Coste semanal: €45-55</div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('plan')">
+                📅 Menú Semanal
+            </button>
+            <button class="tab" onclick="showTab('shopping')">
+                🛒 Lista de Compra
+            </button>
+            <button class="tab" onclick="showTab('recipes')">
+                👨‍🍳 Recetas
+            </button>
+        </div>
+
+        <div id="plan-content" class="content active">
+            <div class="day-card">
+                <h2>Lunes</h2>
+                <div class="meal-item">
+                    <span class="meal-label">Desayuno:</span>
+                    <span class="meal-name">Tostada con tomate y aceite de oliva</span>
+                </div>
+                <div class="meal-item">
+                    <span class="meal-label">Comida:</span>
+                    <span class="meal-name">Lentejas estofadas con verduras de temporada</span>
+                </div>
+                <div class="meal-item">
+                    <span class="meal-label">Cena:</span>
+                    <span class="meal-name">Merluza al horno con patatas</span>
+                </div>
+                <div class="meal-item">
+                    <span class="meal-label">Snack:</span>
+                    <span class="meal-name">Naranja y almendras</span>
+                </div>
+            </div>
+
+            <div class="day-card">
+                <h2>Martes</h2>
+                <div class="meal-item">
+                    <span class="meal-label">Desayuno:</span>
+                    <span class="meal-name">Avena con manzana y canela</span>
+                </div>
+                <div class="meal-item">
+                    <span class="meal-label">Comida:</span>
+                    <span class="meal-name">Arroz con verduras y pollo</span>
+                </div>
+                <div class="meal-item">
+                    <span class="meal-label">Cena:</span>
+                    <span class="meal-name">Tortilla de patatas con ensalada</span>
+                </div>
+                <div class="meal-item">
+                    <span class="meal-label">Snack:</span>
+                    <span class="meal-name">Pan integral con queso fresco</span>
+                </div>
+            </div>
+
+            <div class="day-card">
+                <h2>Miércoles</h2>
+                <div class="meal-item">
+                    <span class="meal-label">Desayuno:</span>
+                    <span class="meal-name">Yogur natural con nueces</span>
+                </div>
+                <div class="meal-item">
+                    <span class="meal-label">Comida:</span>
+                    <span class="meal-name">Garbanzos con espinacas</span>
+                </div>
+                <div class="meal-item">
+                    <span class="meal-label">Cena:</span>
+                    <span class="meal-name">Salmón a la plancha con brócoli</span>
+                </div>
+                <div class="meal-item">
+                    <span class="meal-label">Snack:</span>
+                    <span class="meal-name">Plátano y avellanas</span>
+                </div>
+            </div>
+
+            <div class="day-card">
+                <h2>Jueves</h2>
+                <div class="meal-item">
+                    <span class="meal-label">Desayuno:</span>
+                    <span class="meal-name">Tostada integral con aguacate</span>
+                </div>
+                <div class="meal-item">
+                    <span class="meal-label">Comida:</span>
+                    <span class="meal-name">Paella de verduras</span>
+                </div>
+                <div class="meal-item">
+                    <span class="meal-label">Cena:</span>
+                    <span class="meal-name">Pechuga de pollo con pimientos asados</span>
+                </div>
+                <div class="meal-item">
+                    <span class="meal-label">Snack:</span>
+                    <span class="meal-name">Mandarina y nueces</span>
+                </div>
+            </div>
+
+            <div class="day-card">
+                <h2>Viernes</h2>
+                <div class="meal-item">
+                    <span class="meal-label">Desayuno:</span>
+                    <span class="meal-name">Porridge con pera y miel</span>
+                </div>
+                <div class="meal-item">
+                    <span class="meal-label">Comida:</span>
+                    <span class="meal-name">Bacalao con tomate y cebolla</span>
+                </div>
+                <div class="meal-item">
+                    <span class="meal-label">Cena:</span>
+                    <span class="meal-name">Crema de calabaza con huevo pochado</span>
+                </div>
+                <div class="meal-item">
+                    <span class="meal-label">Snack:</span>
+                    <span class="meal-name">Manzana y almendras</span>
+                </div>
+            </div>
+
+            <div class="day-card">
+                <h2>Sábado</h2>
+                <div class="meal-item">
+                    <span class="meal-label">Desayuno:</span>
+                    <span class="meal-name">Revuelto de champiñones</span>
+                </div>
+                <div class="meal-item">
+                    <span class="meal-label">Comida:</span>
+                    <span class="meal-name">Judías verdes con patatas y zanahoria</span>
+                </div>
+                <div class="meal-item">
+                    <span class="meal-label">Cena:</span>
+                    <span class="meal-name">Sardinas al horno con ensalada</span>
+                </div>
+                <div class="meal-item">
+                    <span class="meal-label">Snack:</span>
+                    <span class="meal-name">Yogur con frutos secos</span>
+                </div>
+            </div>
+
+            <div class="day-card">
+                <h2>Domingo</h2>
+                <div class="meal-item">
+                    <span class="meal-label">Desayuno:</span>
+                    <span class="meal-name">Tostada con tomate y queso</span>
+                </div>
+                <div class="meal-item">
+                    <span class="meal-label">Comida:</span>
+                    <span class="meal-name">Cocido de garbanzos con verduras</span>
+                </div>
+                <div class="meal-item">
+                    <span class="meal-label">Cena:</span>
+                    <span class="meal-name">Dorada al horno con limón</span>
+                </div>
+                <div class="meal-item">
+                    <span class="meal-label">Snack:</span>
+                    <span class="meal-name">Naranja y nueces</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="shopping-content" class="content">
+            <div class="category-card">
+                <h2>Frutas y Verduras</h2>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Tomates</span>
+                    <span class="item-qty">1.5 kg</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Patatas</span>
+                    <span class="item-qty">2 kg</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Cebollas</span>
+                    <span class="item-qty">1 kg</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Espinacas</span>
+                    <span class="item-qty">500g</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Brócoli</span>
+                    <span class="item-qty">500g</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Calabaza</span>
+                    <span class="item-qty">1 kg</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Pimientos</span>
+                    <span class="item-qty">500g</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Champiñones</span>
+                    <span class="item-qty">300g</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Judías verdes</span>
+                    <span class="item-qty">500g</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Zanahorias</span>
+                    <span class="item-qty">500g</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Naranjas</span>
+                    <span class="item-qty">1 kg</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Manzanas</span>
+                    <span class="item-qty">1 kg</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Plátanos</span>
+                    <span class="item-qty">6 unidades</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Peras</span>
+                    <span class="item-qty">500g</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Mandarinas</span>
+                    <span class="item-qty">1 kg</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Aguacate</span>
+                    <span class="item-qty">2 unidades</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Limones</span>
+                    <span class="item-qty">4 unidades</span>
+                </div>
+            </div>
+
+            <div class="category-card">
+                <h2>Proteínas</h2>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Huevos</span>
+                    <span class="item-qty">12 unidades</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Pollo (pechuga)</span>
+                    <span class="item-qty">800g</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Merluza</span>
+                    <span class="item-qty">400g</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Salmón</span>
+                    <span class="item-qty">300g</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Bacalao</span>
+                    <span class="item-qty">400g</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Sardinas</span>
+                    <span class="item-qty">400g</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Dorada</span>
+                    <span class="item-qty">500g</span>
+                </div>
+            </div>
+
+            <div class="category-card">
+                <h2>Legumbres y Cereales</h2>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Lentejas</span>
+                    <span class="item-qty">500g</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Garbanzos</span>
+                    <span class="item-qty">500g</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Arroz</span>
+                    <span class="item-qty">500g</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Avena</span>
+                    <span class="item-qty">500g</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Pan integral</span>
+                    <span class="item-qty">2 barras</span>
+                </div>
+            </div>
+
+            <div class="category-card">
+                <h2>Lácteos</h2>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Yogur natural</span>
+                    <span class="item-qty">1 kg</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Queso fresco</span>
+                    <span class="item-qty">200g</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Queso curado</span>
+                    <span class="item-qty">150g</span>
+                </div>
+            </div>
+
+            <div class="category-card">
+                <h2>Frutos Secos y Otros</h2>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Almendras</span>
+                    <span class="item-qty">200g</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Nueces</span>
+                    <span class="item-qty">200g</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Avellanas</span>
+                    <span class="item-qty">100g</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Aceite de oliva</span>
+                    <span class="item-qty">1 botella</span>
+                </div>
+                <div class="shopping-item" onclick="toggleCheck(this)">
+                    <input type="checkbox">
+                    <span class="item-name">Miel</span>
+                    <span class="item-qty">1 bote</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="recipes-content" class="content">
+            <div id="recipe-list" class="recipe-list">
+                <h2>Recetas Destacadas</h2>
+                <button class="recipe-button" onclick="showRecipe('lentejas')">
+                    <div class="recipe-name">Lentejas estofadas con verduras de temporada</div>
+                    <div class="recipe-meta">45 min • 350 kcal | 18g proteína | 12g fibra</div>
+                </button>
+                <button class="recipe-button" onclick="showRecipe('merluza')">
+                    <div class="recipe-name">Merluza al horno con patatas</div>
+                    <div class="recipe-meta">40 min • 420 kcal | 32g proteína | 4g fibra</div>
+                </button>
+                <button class="recipe-button" onclick="showRecipe('garbanzos')">
+                    <div class="recipe-name">Garbanzos con espinacas</div>
+                    <div class="recipe-meta">20 min • 380 kcal | 16g proteína | 14g fibra</div>
+                </button>
+            </div>
+
+            <div id="recipe-lentejas" class="recipe-detail" style="display: none;">
+                <button class="back-button" onclick="hideRecipe()">← Volver a recetas</button>
+                <h2>Lentejas estofadas con verduras de temporada</h2>
+                <div class="recipe-badges">
+                    <span class="badge badge-time">⏱ 45 min</span>
+                    <span class="badge badge-nutrition">350 kcal | 18g proteína | 12g fibra</span>
+                </div>
+                <div class="recipe-section">
+                    <h3>Ingredientes</h3>
+                    <div class="ingredient-item">
+                        <span class="check-icon">✓</span>
+                        <span class="ingredient-text">300g lentejas</span>
+                    </div>
+                    <div class="ingredient-item">
+                        <span class="check-icon">✓</span>
+                        <span class="ingredient-text">1 cebolla</span>
+                    </div>
+                    <div class="ingredient-item">
+                        <span class="check-icon">✓</span>
+                        <span class="ingredient-text">2 zanahorias</span>
+                    </div>
+                    <div class="ingredient-item">
+                        <span class="check-icon">✓</span>
+                        <span class="ingredient-text">2 tomates</span>
+                    </div>
+                    <div class="ingredient-item">
+                        <span class="check-icon">✓</span>
+                        <span class="ingredient-text">2 dientes ajo</span>
+                    </div>
+                    <div class="ingredient-item">
+                        <span class="check-icon">✓</span>
+                        <span class="ingredient-text">Aceite de oliva</span>
+                    </div>
+                    <div class="ingredient-item">
+                        <span class="check-icon">✓</span>
+                        <span class="ingredient-text">Pimentón</span>
+                    </div>
+                    <div class="ingredient-item">
+                        <span class="check-icon">✓</span>
+                        <span class="ingredient-text">Laurel</span>
+                    </div>
+                </div>
+                <div class="recipe-section">
+                    <h3>Preparación</h3>
+                    <div class="step-item">
+                        <span class="step-number">1</span>
+                        <span class="step-text">Picar la cebolla, zanahoria y ajo finamente</span>
+                    </div>
+                    <div class="step-item">
+                        <span class="step-number">2</span>
+                        <span class="step-text">Rehogar las verduras en aceite de oliva durante 5 minutos</span>
+                    </div>
+                    <div class="step-item">
+                        <span class="step-number">3</span>
+                        <span class="step-text">Añadir las lentejas y cubrir con agua (el triple de volumen)</span>
+                    </div>
+                    <div class="step-item">
+                        <span class="step-number">4</span>
+                        <span class="
