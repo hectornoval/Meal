@@ -1361,24 +1361,37 @@
         }
         
         function showRecipe(recipeName) {
+            console.log('Showing recipe:', recipeName);
+            
             // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            
-            // Hide all recipe details
-            document.querySelectorAll('.recipe-detail').forEach(recipe => {
-                recipe.style.display = 'none';
-            });
             
             // Hide all day cards
             document.querySelectorAll('.day-card').forEach(card => {
                 card.style.display = 'none';
             });
             
+            // Hide all recipe details first
+            document.querySelectorAll('.recipe-detail').forEach(recipe => {
+                recipe.style.display = 'none';
+            });
+            
             // Show selected recipe
-            document.getElementById('recipe-' + recipeName).style.display = 'block';
+            const recipeId = 'recipe-' + recipeName;
+            console.log('Looking for:', recipeId);
+            const selectedRecipe = document.getElementById(recipeId);
+            console.log('Found recipe:', selectedRecipe);
+            
+            if (selectedRecipe) {
+                selectedRecipe.style.display = 'block';
+            } else {
+                console.error('Recipe not found:', recipeId);
+            }
         }
         
         function hideRecipe() {
+            console.log('Hiding recipe');
+            
             // Hide all recipe details
             document.querySelectorAll('.recipe-detail').forEach(recipe => {
                 recipe.style.display = 'none';
